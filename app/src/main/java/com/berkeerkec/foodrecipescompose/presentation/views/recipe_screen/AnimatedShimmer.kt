@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -69,7 +70,7 @@ fun ShimmerGridItem(brush: Brush){
             modifier = Modifier
                 .height(200.dp)
                 .clip(RectangleShape)
-                .background(brush)
+                .background(brush, shape = RoundedCornerShape(10.dp))
                 .weight(1f)
         )
         Column(
@@ -83,7 +84,7 @@ fun ShimmerGridItem(brush: Brush){
                     .fillMaxWidth()
                     .height(40.dp)
                     .padding(horizontal = 12.dp)
-                    .background(brush)
+                    .background(brush, shape = RoundedCornerShape(10.dp))
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -93,7 +94,7 @@ fun ShimmerGridItem(brush: Brush){
                     .fillMaxWidth()
                     .height(50.dp)
                     .padding(horizontal = 12.dp)
-                    .background(brush)
+                    .background(brush, shape = RoundedCornerShape(10.dp))
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -107,14 +108,14 @@ fun ShimmerGridItem(brush: Brush){
                 Spacer(
                     modifier = Modifier
                         .size(40.dp,45.dp)
-                        .background(brush)
+                        .background(brush, shape = RoundedCornerShape(10.dp))
                 )
                 Spacer(modifier = Modifier.width(12.dp))
 
                 Spacer(
                     modifier = Modifier
                         .size(40.dp,45.dp)
-                        .background(brush)
+                        .background(brush, shape = RoundedCornerShape(10.dp))
                 )
 
                 Spacer(modifier = Modifier.width(12.dp))
@@ -122,7 +123,7 @@ fun ShimmerGridItem(brush: Brush){
                 Spacer(
                     modifier = Modifier
                         .size(40.dp,45.dp)
-                        .background(brush)
+                        .background(brush, shape = RoundedCornerShape(10.dp))
                 )
             }
         }

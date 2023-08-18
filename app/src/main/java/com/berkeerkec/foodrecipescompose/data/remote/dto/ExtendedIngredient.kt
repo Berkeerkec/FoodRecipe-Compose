@@ -1,4 +1,4 @@
-package com.berkeerkec.foodrecipescompose.data.model
+package com.berkeerkec.foodrecipescompose.data.remote.dto
 
 
 import com.google.gson.annotations.SerializedName
