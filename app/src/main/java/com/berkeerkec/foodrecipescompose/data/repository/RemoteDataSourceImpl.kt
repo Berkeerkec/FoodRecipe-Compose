@@ -9,7 +9,7 @@ import javax.inject.Inject
 class RemoteDataSourceImpl @Inject constructor(
     private val api : FoodRecipesApi
 ) : RemoteDataSource{
-    override suspend fun getRecipes(queries: Map<String, String>): Response<FoodRecipe> {
+    override suspend fun getRecipes(queries: Map<String, String>): FoodRecipe {
         return api.getRecipes(queries)
     }
 }
