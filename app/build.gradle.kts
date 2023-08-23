@@ -51,6 +51,7 @@ android {
     }
 }
 val nav_version = "2.6.0"
+val room_version = "2.5.2"
 
 dependencies {
 
@@ -106,6 +107,15 @@ dependencies {
     // Coroutine Lifecycle Scopes
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
+
+    //Coil
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
+    //Room Database
+    implementation("androidx.room:room-runtime:$room_version")
+    annotationProcessor("androidx.room:room-compiler:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
 }
 
 kapt {

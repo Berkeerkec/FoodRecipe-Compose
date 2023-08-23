@@ -1,6 +1,8 @@
 package com.berkeerkec.foodrecipescompose.di
 
 import com.berkeerkec.foodrecipescompose.data.remote.FoodRecipesApi
+import com.berkeerkec.foodrecipescompose.data.repository.RemoteDataSourceImpl
+import com.berkeerkec.foodrecipescompose.domain.repository.RemoteDataSource
 import com.berkeerkec.foodrecipescompose.util.Constant.Companion.BASE_URL
 import dagger.Module
 import dagger.Provides
@@ -35,5 +37,11 @@ object AppModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(FoodRecipesApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideRemoteDataSource(api : FoodRecipesApi) : RemoteDataSource{
+        return RemoteDataSourceImpl(api)
     }
 }

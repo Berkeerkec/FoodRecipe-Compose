@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,16 +28,22 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.berkeerkec.foodrecipescompose.R
 import com.berkeerkec.foodrecipescompose.presentation.ui.theme.Purple40
+import com.berkeerkec.foodrecipescompose.presentation.view_models.main_view_model.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RecipeScreen(){
+fun RecipeScreen(
+    viewModel: MainViewModel = hiltViewModel()
+){
+
+    val state = viewModel.state.value
+
     Scaffold(topBar = { RecipesAppBar()},
         modifier = Modifier.fillMaxSize()) {
 
-        val verticalScroll = rememberScrollState()
         Column(
             modifier = Modifier
                 .padding(it)
@@ -50,16 +58,17 @@ fun RecipeScreen(){
                     modifier = Modifier
                         .fillMaxSize()
                         .background(Color.LightGray)
-                        .verticalScroll(verticalScroll)
                 ) {
-                    RecipeRow()
-                    RecipeRow()
-                    RecipeRow()
-                    RecipeRow()
-                    RecipeRow()
-                    RecipeRow()
-                    RecipeRow()
-                    RecipeRow()
+
+                    state.recipes.let {food ->
+                        LazyColumn(modifier = Modifier.fillMaxSize()){
+                            if (food != null) {
+                                items(food.results){ result ->
+                                    RecipeRow(recipes = result)
+                                }
+                            }
+                        }
+                    }
                 }
 
                 Column(
@@ -73,10 +82,8 @@ fun RecipeScreen(){
 
                 }
             }
-
-
-
         }
+
     }
 }
 
