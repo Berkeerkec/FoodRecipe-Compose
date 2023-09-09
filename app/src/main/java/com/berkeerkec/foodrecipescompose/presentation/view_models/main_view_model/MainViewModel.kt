@@ -7,9 +7,10 @@ import android.net.NetworkCapabilities
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.berkeerkec.foodrecipescompose.data.local.RecipesEntity
 import com.berkeerkec.foodrecipescompose.data.remote.dto.FoodRecipe
+import com.berkeerkec.foodrecipescompose.domain.repository.LocalDataSource
 import com.berkeerkec.foodrecipescompose.domain.use_case.get_data_use_case.GetDataUseCase
 import com.berkeerkec.foodrecipescompose.util.Constant
 import com.berkeerkec.foodrecipescompose.util.Constant.Companion.DEFAULT_DIET_TYPE
@@ -22,27 +23,46 @@ import com.berkeerkec.foodrecipescompose.util.Constant.Companion.QUERY_FILL_INGR
 import com.berkeerkec.foodrecipescompose.util.Constant.Companion.QUERY_NUMBER
 import com.berkeerkec.foodrecipescompose.util.Constant.Companion.QUERY_TYPE
 import com.berkeerkec.foodrecipescompose.util.Resource
-import dagger.hilt.android.internal.Contexts.getApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import retrofit2.Response
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val getDataUseCase: GetDataUseCase,
+    private val localRepo : LocalDataSource,
     private val application : Application
 ): AndroidViewModel(application){
 
+    /** Room Database **/
+    private val _readRecipe = mutableStateOf<ReadRecipeState>(ReadRecipeState())
+    val readRecipe : State<ReadRecipeState> = _readRecipe
+
+    private fun insertRecipes(recipesEntity: RecipesEntity) {
+        viewModelScope.launch(Dispatchers.IO) {
+            localRepo.insertRecipes(recipesEntity)
+        }
+    }
+
+    private fun readRecipes(){
+        localRepo.readDatabase().onEach {
+
+            _readRecipe.value = ReadRecipeState(it)
+
+        }.launchIn(viewModelScope)
+    }
+
+
+    /** Retrofit **/
     private val _state = mutableStateOf<GetRecipeState>(GetRecipeState())
     val state : State<GetRecipeState> = _state
 
-
-
     init {
         getRecipes(applyQueries())
+        readRecipes()
     }
 
     private fun applyQueries() : HashMap<String,String>{
@@ -66,6 +86,11 @@ class MainViewModel @Inject constructor(
                 when(it){
                     is Resource.Success -> {
                         _state.value = GetRecipeState(recipes = it.data)
+
+                        val foodRecipe = _state.value.recipes
+                        if (foodRecipe != null){
+                            offlineCacheRecipes(foodRecipe)
+                        }
                     }
 
                     is Resource.Error -> {
@@ -83,6 +108,11 @@ class MainViewModel @Inject constructor(
             Resource.Error(null, "No Internet Connection!")
         }
 
+    }
+
+    private fun offlineCacheRecipes(foodRecipe: FoodRecipe) {
+        val entity = RecipesEntity(foodRecipe)
+        insertRecipes(entity)
     }
 
 

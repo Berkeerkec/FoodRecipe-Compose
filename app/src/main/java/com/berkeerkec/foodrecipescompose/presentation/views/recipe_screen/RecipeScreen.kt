@@ -1,5 +1,6 @@
 package com.berkeerkec.foodrecipescompose.presentation.views.recipe_screen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,10 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -30,6 +29,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.berkeerkec.foodrecipescompose.R
+import com.berkeerkec.foodrecipescompose.data.local.RecipesEntity
+import com.berkeerkec.foodrecipescompose.data.remote.dto.Result
 import com.berkeerkec.foodrecipescompose.presentation.ui.theme.Purple40
 import com.berkeerkec.foodrecipescompose.presentation.view_models.main_view_model.MainViewModel
 
@@ -40,6 +41,7 @@ fun RecipeScreen(
 ){
 
     val state = viewModel.state.value
+    val read = viewModel.readRecipe.value
 
     Scaffold(topBar = { RecipesAppBar()},
         modifier = Modifier.fillMaxSize()) {
@@ -60,12 +62,23 @@ fun RecipeScreen(
                         .background(Color.LightGray)
                 ) {
 
-                    state.recipes.let {food ->
-                        LazyColumn(modifier = Modifier.fillMaxSize()){
-                            if (food != null) {
-                                items(food.results){ result ->
-                                    RecipeRow(recipes = result)
+                    read.entity?.foodRecipe?.results?.let { listResult ->
+                        state.recipes?.let { food ->
+                            if (listResult.isEmpty()){
+                                LazyColumn(modifier = Modifier.fillMaxSize()){
+                                    items(food.results){ result ->
+                                        RecipeRow(recipes = result)
+                                    }
                                 }
+                                Log.d("Comolokko", "Remote Database")
+
+                            }else{
+                                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                                    items(listResult) { result ->
+                                        RecipeRow(recipes = result)
+                                    }
+                                }
+                                Log.d("Comolokko", "Local Database")
                             }
                         }
                     }
@@ -77,9 +90,7 @@ fun RecipeScreen(
                     horizontalAlignment = Alignment.End,
                     verticalArrangement = Arrangement.Bottom
                 ) {
-
                     FloatingAction()
-
                 }
             }
         }
@@ -124,3 +135,27 @@ fun FloatingAction(){
 fun RecipesScreenPreview(){
     RecipeScreen()
 }
+
+
+
+/*read.entity?.foodRecipe?.results?.let { listResult ->
+                        state.recipes?.let { food ->
+                            if (listResult.isEmpty()){
+                                LazyColumn(modifier = Modifier.fillMaxSize()){
+                                    items(food.results){ result ->
+                                        RecipeRow(recipes = result)
+                                    }
+                                }
+                                viewModel.insertRecipes(RecipesEntity(food))
+
+                                Log.d("Comolokko", "Remote Database")
+                            }else{
+                                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                                    items(listResult) { result ->
+                                        RecipeRow(recipes = result)
+                                    }
+                                }
+                                Log.d("Comolokko", "Local Database")
+                            }
+                        }
+                    }*/

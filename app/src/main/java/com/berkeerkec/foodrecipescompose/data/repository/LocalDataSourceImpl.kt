@@ -9,7 +9,7 @@ import javax.inject.Inject
 class LocalDataSourceImpl @Inject constructor(
     private val dao : RecipesDao
 ) : LocalDataSource {
-    override fun readDatabase(): Flow<List<RecipesEntity>> {
+    override fun readDatabase(): Flow<RecipesEntity> {
         return dao.readRecipes()
     }
 

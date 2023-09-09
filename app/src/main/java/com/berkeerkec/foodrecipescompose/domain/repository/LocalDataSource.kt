@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface LocalDataSource {
 
-    fun readDatabase() : Flow<List<RecipesEntity>>
+    fun readDatabase() : Flow<RecipesEntity>
 
     suspend fun insertRecipes(recipesEntity: RecipesEntity)
 }
